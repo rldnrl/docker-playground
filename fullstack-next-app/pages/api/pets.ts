@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getAllPets } from "prisma/pet";
 
 export type Cat = {
   id: string;
@@ -11,6 +12,7 @@ export type Cat = {
   gender: "male" | "female";
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const cats: Array<Cat> = [
   {
     id: "1",
@@ -59,9 +61,16 @@ const cats: Array<Cat> = [
   },
 ];
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Cat[]>
 ) {
-  res.status(200).json(cats);
+  // res.status(200).json(cats);
+  try {
+    const pets = await getAllPets();
+    return res.status(200).json(pets);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return res.status(500).json({ ...error, message: error.message });
+  }
 }
